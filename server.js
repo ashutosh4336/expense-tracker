@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const colors = require('colors');
 const morgan = require('morgan');
 const cors = require('cors');
+const path = require('path');
 
 // Dotenv
 dotenv.config({ path: './config/config.env' });
@@ -28,6 +29,13 @@ app.use(express.json());
 
 // Mount Routes
 app.use('/api/v1/transactions', transactions);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+  app.get('*', (req, res) => {
+    res.sendfile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 
